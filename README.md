@@ -68,6 +68,10 @@ Body JSON
 ```
 
 Response:
+```
+Http status: 201
+Media type: application/json
+```
 
 ```
 {
@@ -99,6 +103,10 @@ GET http://localhost:8085/v1/addresses/88330659
 ```
 
 Response:
+```
+Http status: 200
+Media type: application/json
+```
 
 ```
 {
