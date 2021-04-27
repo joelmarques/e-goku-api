@@ -3,8 +3,11 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+.mvn
+mvnw
+mvnw.cmd
 
-### STS ###
+### Eclipse/STS ###
 .apt_generated
 .classpath
 .factorypath
@@ -12,6 +15,12 @@ target/
 .settings
 .springBeans
 .sts4-cache
+*/**/*.prefs
+*/**/*.setings
+.DS_Store
+.attach*
+.directory
+/bin/
 
 ### IntelliJ IDEA ###
 .idea
