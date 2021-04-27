@@ -1,6 +1,7 @@
 package br.com.abasteceai.address;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -14,7 +15,6 @@ public class DefaultAddressService implements AddressService {
     public Mono<AddressModel> save(AddressModel address) { return addressRepository.save(address); }
 
     @Override
-    public Mono<AddressModel> findByZip(String zip) {
-        return addressRepository.findByZip(zip);
-    }
+    @Cacheable(value = "addresses", key = "#zip")
+    public Mono<AddressModel> findByZip(String zip) { return addressRepository.findByZip(zip); }
 }

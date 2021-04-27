@@ -10,6 +10,18 @@ Para garantir performance na API e sem gargalos no Banco de Dados foi adotada um
 
 Reactive Stack with Spring WebFlux, MongoDB, Netty e Java 11
 
+# Index
+
+Para melhorar a performance na busca de endereço por cep foi criado um índice "zip_idx" na collection "addresses" do MongoDB.
+
+# Caching
+
+Para melhorar ainda mais o desempenho dos serviços foi criada uma estrutura de cache para manter os endereços sempre disponível e atualizado
+dispensando a busca no banco de dados quando a informação já está em cache.
+
+# Auditing
+
+
 # Swagger
 
 ```
@@ -123,5 +135,18 @@ Media type: application/json
   "ibge": "4202008",
   "ddd": "47"
 }
+```
+
+# Referências
+```
+https://www.baeldung.com/spring-5
+https://www.baeldung.com/spring-5-functional-web
+https://www.baeldung.com/spring-security-5-reactive
+https://www.baeldung.com/spring-cache-tutorial
+https://spring.io/reactive
+https://spring.io/guides/gs/caching/
+https://springdoc.org/
+https://docs.spring.io/spring-framework/docs/current/reference/html/web-reactive.html
+https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#auditing
 ```
 
