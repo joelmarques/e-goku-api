@@ -1,6 +1,7 @@
 package br.com.abasteceai.address;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -18,7 +19,7 @@ public class AddressHandler {
 
         Mono<AddressModel> address = request.bodyToMono(AddressModel.class);
 
-        return ServerResponse.ok()
+        return ServerResponse.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromPublisher(address.flatMap(addressService::save), AddressModel.class));
     }
