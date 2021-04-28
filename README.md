@@ -10,7 +10,7 @@ Para garantir performance na API e sem gargalos no Banco de Dados foi adotada um
 
 Reactive Stack with Spring WebFlux, MongoDB, Netty e Java 11
 
-# Index
+# Indexing
 
 Para melhorar a performance na busca de endereço por cep foi criado um índice "zip_idx" na collection "addresses" do MongoDB.
 
@@ -21,6 +21,48 @@ dispensando a busca no banco de dados quando a informação já está em cache.
 
 # Auditing
 
+Para permitir auditoria em todas as alterações nas informações foi auditado as seguintes informações:
+```
+createdDate = Data em que a informação foi criada
+createdBy = Responsável pela criação da informação
+lastModifiedDate = Data da última alteração da informação
+lastModifiedBy = Responsável pela última alteração da informação
+```
+
+# Securing
+
+De maneira a garantir a segurança das informações, os serviços estão protegidos com a solução JSON Web Tokens e Spring Security 
+para garantir que não possam ser acessados por pessoas ou sistemas não autorizados.
+
+# Login
+
+Request:
+```
+POST http://localhost:8085/auth/token
+```
+
+Body Json
+```
+{
+    "username":"Joel",
+    "password": "123"
+}
+```
+
+Response:
+
+Body Json
+```
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKb2VsIiwicm9sZXMiOiJBRE1JTiIsImlhdCI6MTYxOTYyNzA2OSwiZXhwIjoxNjE5NjMwNjY5fQ.vsonUTl7HQ4w2Cjwye1uYCd0id5XDke3JwDJG_ThY_w"
+}
+```
+
+Header Param
+```
+Name: Authorization
+Value: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKb2VsIiwicm9sZXMiOiJBRE1JTiIsImlhdCI6MTYxOTYyNzA2OSwiZXhwIjoxNjE5NjMwNjY5fQ.vsonUTl7HQ4w2Cjwye1uYCd0id5XDke3JwDJG_ThY_w"
+```
 
 # Swagger
 
@@ -61,6 +103,12 @@ Request:
 
 ```
 POST http://localhost:8085/v1/addresses
+```
+
+Header Param
+```
+Name: Authorization
+Value: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKb2VsIiwicm9sZXMiOiJBRE1JTiIsImlhdCI6MTYxOTYyNzA2OSwiZXhwIjoxNjE5NjMwNjY5fQ.vsonUTl7HQ4w2Cjwye1uYCd0id5XDke3JwDJG_ThY_w"
 ```
 
 Body JSON
@@ -114,6 +162,12 @@ Request:
 GET http://localhost:8085/v1/addresses/88330659
 ```
 
+Header Param
+```
+Name: Authorization
+Value: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKb2VsIiwicm9sZXMiOiJBRE1JTiIsImlhdCI6MTYxOTYyNzA2OSwiZXhwIjoxNjE5NjMwNjY5fQ.vsonUTl7HQ4w2Cjwye1uYCd0id5XDke3JwDJG_ThY_w"
+```
+
 Response:
 ```
 Http status: 200
@@ -148,5 +202,10 @@ https://spring.io/guides/gs/caching/
 https://springdoc.org/
 https://docs.spring.io/spring-framework/docs/current/reference/html/web-reactive.html
 https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#auditing
+https://jwt.io/
 ```
+
+# That's all
+
+Hope you enjoy it.
 

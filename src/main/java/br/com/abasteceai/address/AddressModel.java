@@ -2,9 +2,7 @@ package br.com.abasteceai.address;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -20,8 +18,14 @@ public class AddressModel {
     @CreatedDate
     private LocalDateTime createdDate;
 
+    @CreatedBy
+    private String createdBy;
+
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
+
+    @LastModifiedBy
+    private String lastModifiedBy;
 
     @Indexed(name = "zip_idx", unique = true)
     private String zip;
