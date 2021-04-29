@@ -1,0 +1,36 @@
+version: '3.4'
+
+services:
+
+  mongodb:
+    image: mongo
+    volumes:
+      - mongodata:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      backend:
+        ipv4_address: 172.30.0.2
+
+  api:
+    image: goku/e-goku-api
+    build: .
+    environment:
+      - "SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/goku"
+    ports:
+      - "8085:8085"
+    depends_on:
+      - mongodb
+    networks:
+      backend:
+        ipv4_address: 172.30.0.3
+
+volumes:
+  mongodata:
+
+networks:
+  backend:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24

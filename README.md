@@ -70,6 +70,67 @@ Todos os usuários precisam está autenticados.
 .pathMatchers("/v1/**").authenticated()
 ```
 
+# Swagger
+
+Para realizar toda a documentação dos serviços disponibilizados por essa api foi utilizado o Swagger com OpenAPI 3
+
+```
+http://localhost:8085/swagger-ui.html
+```
+
+# MongoDB Connection URI Local
+
+```
+spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/test}
+```
+
+# Docker
+
+```
+sudo docker build -t e-goku-api .
+sudo docker run -p 8085:8085 e-goku-api
+```
+
+# Docker-compose
+
+Foi criado um "Dockerfile" e um "docker-compose.yml" para criar/subir uma imagem docker da api com Java 11, 
+subir uma instancia do mongodb com ambos na mesma network.
+
+Para subir todo o ambiente e deixar disponível para uso, 
+basta executar no terminal na raiz da aplicação (diretório onde está o arquivo "docker-compose.yml":
+
+```
+$ sudo docker-compose build
+$ sudo docker-compose up -d
+```
+
+# Caso você ainda não tenha o Docker e o Docker compose instalados*:
+
+*Considerando o SO como Linux/Ubuntu
+
+```
+$ sudo apt install docker
+$ sudo apt install docker.io
+$ docker -v
+
+$ sudo apt install docker-compose
+$ docker-compose -v
+```
+
+# Health check
+
+Request:
+
+```
+GET http://localhost:8085/actuator/health
+```
+
+Response:
+
+```
+{"status":"UP"}
+```
+
 # Login
 
 Request:
@@ -98,39 +159,6 @@ Header Param
 ```
 Name: Authorization
 Value: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTYxOTY2OTgxNCwiZXhwIjoxNjE5NjczNDE0fQ.-85AgUQWjEcouX6Akd0qduLe3RCEqwCi6-LIW1QKYO4"
-```
-
-# Swagger
-
-```
-http://localhost:8085/swagger-ui.html
-```
-
-# Docker
-
-```
-sudo docker build -t e-goku-api .
-sudo docker run -p 8085:8085 e-goku-api
-```
-
-# Health check
-
-Request:
-
-```
-GET http://localhost:8085/actuator/health
-```
-
-Response:
-
-```
-{"status":"UP"}
-```
-
-# MongoDB Connection URI Local
-
-```
-spring.data.mongodb.uri=mongodb://localhost:27017/test
 ```
 
 # Cadastro de Usuários
