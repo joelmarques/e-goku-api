@@ -10,6 +10,20 @@ Para garantir performance na API e sem gargalos no Banco de Dados foi adotada um
 
 Reactive Stack with Spring WebFlux, MongoDB, Netty e Java 11
 
+# Estrutura do Projeto
+
+O projeto foi estruturado em domínios (domain) para uma melhor divisão das responsabilidades: 
+address; user; security; config; Dockerfile e docker-compose
+
+```
+address -> módulo responsável por toda a gestão de endereços
+user -> módulo responsável por toda a gestão de usuários
+security -> parte responsável por manter toda a lógica de segurança da api
+config -> parte reponsável por concentrar as configurações de Auditing, Caching e Swagger
+Dockerfile -> responsável por gerar uma imagem docker da api
+docker-compose -> responsável por subir uma instância da api e do MongoDB no docker
+```
+
 # Indexing
 
 Para melhorar a performance na busca de endereço por cep foi criado um índice "zip_idx" na collection "addresses" do MongoDB.
