@@ -318,6 +318,13 @@ Media type: application/json
 }
 ```
 
+# Próximos passos
+
+1) Melhorar o Swagger para suportar autenticação
+2) Configurar um SonarQube para medir a qualidade do código
+3) Realizar mais testes de unidade e de integração
+4) Realizar testes de performance
+
 # Referências
 ```
 https://www.baeldung.com/spring-5
