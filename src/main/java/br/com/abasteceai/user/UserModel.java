@@ -1,14 +1,38 @@
 package br.com.abasteceai.user;
 
-import br.com.abasteceai.security.AuthUser;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.*;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter@Setter
-public class UserModel implements AuthUser {
+@Document(collection = "users")
+public class UserModel {
 
+    @Id
+    private String id;
+
+    @CreatedDate
+    private LocalDateTime createdDate;
+
+    @CreatedBy
+    private String createdBy;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
+
+    @LastModifiedBy
+    private String lastModifiedBy;
+
+    private String name;
+    private String email;
+    private String phone;
+
+    @Indexed(name = "username_idx", unique = true)
     private String username;
     private String password;
     private boolean active;

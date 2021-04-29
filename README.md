@@ -14,10 +14,20 @@ Reactive Stack with Spring WebFlux, MongoDB, Netty e Java 11
 
 Para melhorar a performance na busca de endereço por cep foi criado um índice "zip_idx" na collection "addresses" do MongoDB.
 
+```
+@Indexed(name = "zip_idx", unique = true)
+private String zip;
+```
+
 # Caching
 
 Para melhorar ainda mais o desempenho dos serviços foi criada uma estrutura de cache para manter os endereços sempre disponível e atualizado
 dispensando a busca no banco de dados quando a informação já está em cache.
+
+```
+@Cacheable(value = "addresses", key = "#zip")
+public Mono<AddressModel> findByZip(String zip) { return addressRepository.findByZip(zip); }
+```
 
 # Auditing
 
@@ -29,10 +39,36 @@ lastModifiedDate = Data da última alteração da informação
 lastModifiedBy = Responsável pela última alteração da informação
 ```
 
+```
+@CreatedDate
+private LocalDateTime createdDate;
+
+@CreatedBy
+private String createdBy;
+
+@LastModifiedDate
+private LocalDateTime lastModifiedDate;
+
+@LastModifiedBy
+private String lastModifiedBy;
+```
+
 # Securing
 
 De maneira a garantir a segurança das informações, os serviços estão protegidos com a solução JSON Web Tokens e Spring Security 
 para garantir que não possam ser acessados por pessoas ou sistemas não autorizados.
+
+Foram implementadas as seguintes regras de acesso:
+```
+Somente os usuários com perfil "ADMIN" pode cadastrar outros usuários;
+Somente os usuários com perfil "USER" pode cadastrar "endereços";
+Todos os usuários precisam está autenticados.
+```
+```
+.pathMatchers(HttpMethod.POST,"/v1/users").hasRole("ADMIN")
+.pathMatchers(HttpMethod.POST,"/v1/addresses").hasRole("USER")
+.pathMatchers("/v1/**").authenticated()
+```
 
 # Login
 
@@ -44,8 +80,8 @@ POST http://localhost:8085/auth/token
 Body Json
 ```
 {
-    "username":"Joel",
-    "password": "123"
+    "username":"admin",
+    "password": "admin"
 }
 ```
 
@@ -54,14 +90,14 @@ Response:
 Body Json
 ```
 {
-  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKb2VsIiwicm9sZXMiOiJBRE1JTiIsImlhdCI6MTYxOTYyNzA2OSwiZXhwIjoxNjE5NjMwNjY5fQ.vsonUTl7HQ4w2Cjwye1uYCd0id5XDke3JwDJG_ThY_w"
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTYxOTY2OTgxNCwiZXhwIjoxNjE5NjczNDE0fQ.-85AgUQWjEcouX6Akd0qduLe3RCEqwCi6-LIW1QKYO4"
 }
 ```
 
 Header Param
 ```
 Name: Authorization
-Value: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKb2VsIiwicm9sZXMiOiJBRE1JTiIsImlhdCI6MTYxOTYyNzA2OSwiZXhwIjoxNjE5NjMwNjY5fQ.vsonUTl7HQ4w2Cjwye1uYCd0id5XDke3JwDJG_ThY_w"
+Value: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTYxOTY2OTgxNCwiZXhwIjoxNjE5NjczNDE0fQ.-85AgUQWjEcouX6Akd0qduLe3RCEqwCi6-LIW1QKYO4"
 ```
 
 # Swagger
@@ -97,7 +133,64 @@ Response:
 spring.data.mongodb.uri=mongodb://localhost:27017/test
 ```
 
+# Cadastro de Usuários
+
+Obs: Somente os usuários com perfil "ADMIN" pode cadastrar outros usuários.
+
+Request:
+
+```
+POST http://localhost:8085/v1/users
+```
+
+Header Param
+```
+Name: Authorization
+Value: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTYxOTY2OTgxNCwiZXhwIjoxNjE5NjczNDE0fQ.-85AgUQWjEcouX6Akd0qduLe3RCEqwCi6-LIW1QKYO4"
+```
+
+Body JSON
+
+```
+{
+	"name": "Joel Marques",
+	"email": "bitmarques@gmail.com",
+	"phone": "(11) 97677-3970",
+	"username": "joel",
+	"password": "123",
+	"active": true,
+	"roles": ["USER"]
+}
+```
+
+Response:
+```
+Http status: 201
+Media type: application/json
+```
+
+```
+{
+  "id": "608a0e7096b4b45ea9a26a57",
+  "createdDate": "2021-04-28T22:40:00.109346",
+  "createdBy": "admin",
+  "lastModifiedDate": "2021-04-28T22:40:00.109346",
+  "lastModifiedBy": "admin",
+  "name": "Joel Marques",
+  "email": "bitmarques@gmail.com",
+  "phone": "(11) 97677-3970",
+  "username": "joel",
+  "password": "{bcrypt}$2a$10$6jHRH5UmOWWoKeFBjdIYhOdNcIE2Nb627RIKkmPeXocsqCsJ/HjNW",
+  "active": true,
+  "roles": [
+    "USER"
+  ]
+}
+```
+
 # Cadastro de Endereço
+
+Obs: Somente os usuários com perfil "USER" pode cadastrar "endereços".
 
 Request:
 
@@ -108,7 +201,7 @@ POST http://localhost:8085/v1/addresses
 Header Param
 ```
 Name: Authorization
-Value: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKb2VsIiwicm9sZXMiOiJBRE1JTiIsImlhdCI6MTYxOTYyNzA2OSwiZXhwIjoxNjE5NjMwNjY5fQ.vsonUTl7HQ4w2Cjwye1uYCd0id5XDke3JwDJG_ThY_w"
+Value: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2VsIiwicm9sZXMiOiJST0xFX1VTRVIiLCJpYXQiOjE2MTk2Njk5MzksImV4cCI6MTYxOTY3MzUzOX0.7OzRCbQ4Zys8r4Ir9lBogfN9RZ4AyoUB5sy8pqJrMvE"
 ```
 
 Body JSON
@@ -137,7 +230,9 @@ Media type: application/json
 {
   "id": "60878808d652a12deb8cc1fd",
   "createdDate": "2021-04-27T00:42:00.346123",
+  "createdBy": "joel",
   "lastModifiedDate": "2021-04-27T00:42:00.346123",
+  "lastModifiedBy": "joel",
   "zip": "88330659",
   "line1": "Avenida do Estado Dalmo Vieira",
   "line2": "de 4047 a 4595 - lado ímpar",
@@ -152,6 +247,8 @@ Media type: application/json
 
 # Busca de Endereço por CEP
 
+Obs: Todos os usuários autenticados podem buscar endereços.
+
 URI com Path Variable:
 ```
 GET http://localhost:8085/v1/addresses/{zip}
@@ -165,7 +262,7 @@ GET http://localhost:8085/v1/addresses/88330659
 Header Param
 ```
 Name: Authorization
-Value: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKb2VsIiwicm9sZXMiOiJBRE1JTiIsImlhdCI6MTYxOTYyNzA2OSwiZXhwIjoxNjE5NjMwNjY5fQ.vsonUTl7HQ4w2Cjwye1uYCd0id5XDke3JwDJG_ThY_w"
+Value: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2VsIiwicm9sZXMiOiJST0xFX1VTRVIiLCJpYXQiOjE2MTk2Njk5MzksImV4cCI6MTYxOTY3MzUzOX0.7OzRCbQ4Zys8r4Ir9lBogfN9RZ4AyoUB5sy8pqJrMvE"
 ```
 
 Response:
@@ -178,7 +275,9 @@ Media type: application/json
 {
   "id": "60878808d652a12deb8cc1fd",
   "createdDate": "2021-04-27T00:42:00.346",
+  "createdBy": "joel",
   "lastModifiedDate": "2021-04-27T00:42:00.346",
+  "lastModifiedBy": "joel",
   "zip": "88330659",
   "line1": "Avenida do Estado Dalmo Vieira",
   "line2": "de 4047 a 4595 - lado ímpar",

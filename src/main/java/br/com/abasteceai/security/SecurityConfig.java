@@ -2,6 +2,7 @@ package br.com.abasteceai.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
@@ -29,10 +30,12 @@ public class SecurityConfig {
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .authenticationManager(reactiveAuthenticationManager)
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
-                .authorizeExchange(it -> it
-                        .pathMatchers("/v1/**").authenticated()
-                        .anyExchange().permitAll()
-                )
+                .authorizeExchange()
+                .pathMatchers(HttpMethod.POST,"/v1/users").hasRole("ADMIN")
+                .pathMatchers(HttpMethod.POST,"/v1/addresses").hasRole("USER")
+                .pathMatchers("/v1/**").authenticated()
+                .anyExchange().permitAll()
+                .and()
                 .addFilterAt(new JwtTokenAuthenticationFilter(tokenProvider), SecurityWebFiltersOrder.HTTP_BASIC)
                 .build();
     }
