@@ -1,5 +1,6 @@
 package br.com.abasteceai.address;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.*;
@@ -9,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 @Getter@Setter
+@EqualsAndHashCode(of = "zip")
 @Document(collection = "addresses")
 public class AddressModel {
 

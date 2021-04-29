@@ -1,5 +1,6 @@
 package br.com.abasteceai.user;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.*;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter@Setter
+@EqualsAndHashCode(of = "username")
 @Document(collection = "users")
 public class UserModel {
 
